@@ -65,3 +65,75 @@
             </div>
         </div>
     </div>
+
+     <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактирование заказа</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Дата начала</label>
+                                <select class="form-select" id="edit-date" required></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Время начала</label>
+                                <select class="form-select" id="edit-time" name="time_start" required></select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Количество человек</label>
+                                <input type="number" class="form-control" id="edit-persons" min="1" max="20" required>
+                            </div>
+                        </div>
+                        <h6 class="mt-4">Дополнительные опции</h6>
+                        <div class="row" id="edit-options">
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="early_registration" disabled>
+                                <label class="form-check-label" for="early_registration">Ранняя регистрация (-10%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="group_enrollment" disabled>
+                                <label class="form-check-label" for="group_enrollment">Групповая скидка (-15%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="intensive_course" disabled>
+                                <label class="form-check-label" for="intensive_course">Интенсивный курс (+20%)</label>
+                            </div> 
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input edit-opt" type="checkbox" id="edit-supplementary">
+                                <label class="form-check-label">Доп. материалы (+2000 ₽)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input edit-opt" type="checkbox" id="edit-personalized">
+                                <label class="form-check-label">Индивидуально (+1500 ₽/нед)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input edit-opt" type="checkbox" id="edit-excursions">
+                                <label class="form-check-label">Экскурсии (+25%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input edit-opt" type="checkbox" id="edit-interactive">
+                                <label class="form-check-label">Онлайн-платформа (+50%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="edit-assessment">
+                                <label class="form-check-label" for="assessment">Оценка уровня (+300 ₽)</label>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-light text-end rounded">
+                            <span class="fs-5">Итого: <strong id="edit-total-price">0</strong> ₽</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" form="edit-form" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
