@@ -64,7 +64,7 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="courses" class="py-5 bg-light">
             <div class="container">
                 <h2 class="mb-4">Предлагаемые курсы</h2>
@@ -137,3 +137,49 @@
             </div>
         </section>
     </main>
+
+    <section id="resources-map-section" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Карта учебных ресурсов</h2>
+        <p class="text-center text-muted mb-4">Найдите ближайшие библиотеки, языковые клубы и культурные центры</p>
+        
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <div class="card shadow-sm p-3">
+                    <h5 class="mb-3">Поиск и фильтры</h5>
+
+                    <div class="mb-3">
+            <input type="text" class="form-control" id="map-search-input" 
+                   placeholder="Поиск (напр. клуб, кафе...)">
+        </div>
+                    
+                    <div id="map-filters">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-map" type="checkbox" value="education" id="f-edu" checked>
+                            <label class="form-check-label" for="f-edu">Образовательные учреждения</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-map" type="checkbox" value="library" id="f-lib" checked>
+                            <label class="form-check-label" for="f-lib">Публичные библиотеки</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-map" type="checkbox" value="culture" id="f-cult" checked>
+                            <label class="form-check-label" for="f-cult">Культурные центры</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-map" type="checkbox" value="cafe" id="f-cafe" checked>
+                            <label class="form-check-label" for="f-cafe">Языковые кафе и клубы</label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mt-2">
+                        <small class="text-muted">Используйте карту для поиска мест для практики русского языка в Москве.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div id="map" class="rounded shadow-sm" style="width: 100%; height: 500px; background-color: #e9ecef;"></div>
+            </div>
+        </div>
+    </div>
+</section>
