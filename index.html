@@ -195,3 +195,99 @@
             <small>&copy; 2025 Learn Russian School. Все права защищены.</small>
         </div>
     </footer>
+
+     <div class="modal fade" id="orderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Оформление заявки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="order-form">
+                        <input type="hidden" id="item-id">
+                        <input type="hidden" id="item-type"> <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Курс / Репетитор</label>
+                                <input type="text" class="form-control" id="form-name" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Преподаватель</label>
+                                <input type="text" class="form-control" id="form-teacher" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Дата начала</label>
+                                <select class="form-select" id="form-date" required></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Время начала</label>
+                                <select class="form-select" id="form-time" required disabled>
+                                    <option value="">Выберите дату</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Длительность (<span id="duration-unit">часов</span>)</label>
+
+                                <input type="number" class="form-control" id="form-duration" min="1" max="40">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Кол-во студентов (1-20)</label>
+                                <input type="number" class="form-control" id="form-persons" min="1" max="20" value="1" required>
+                            </div>
+                        </div>
+
+                        
+                        <hr>
+                        <h6>Дополнительные опции</h6>
+                        <div id="options-container" class="row">
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="early_registration" disabled>
+                                <label class="form-check-label" for="early_registration">Ранняя регистрация (-10%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="group_enrollment" disabled>
+                                <label class="form-check-label" for="group_enrollment">Групповая скидка (-15%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="intensive_course" disabled>
+                                <label class="form-check-label" for="intensive_course">Интенсивный курс (+20%)</label>
+                            </div> 
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="supplementary">
+                                <label class="form-check-label" for="supplementary">Доп. материалы (+2000/чел)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="personalized">
+                                <label class="form-check-label" for="personalized">Индивидуальные занятия (+1500/нед)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="excursions">
+                                <label class="form-check-label" for="excursions">Культурные экскурсии (+25%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="interactive">
+                                <label class="form-check-label" for="interactive">Онлайн-платформа (+50%)</label>
+                            </div>
+                            <div class="col-md-6 form-check mb-2">
+                                <input class="form-check-input opt-check" type="checkbox" id="assessment">
+                                <label class="form-check-label" for="assessment">Оценка уровня (+300 ₽)</label>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-light border rounded text-end">
+                            <span class="fs-5 me-2">Итоговая стоимость:</span>
+                            <span class="fs-4 fw-bold text-primary" id="total-price">0</span> ₽
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" form="order-form" class="btn btn-primary">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
