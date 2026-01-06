@@ -158,3 +158,172 @@ function initMap() {
         objectManager.objects.options.set('preset', 'islands#blueIcon');
         myMap.geoObjects.add(objectManager);
         objectManager.add(resourcesData);
+
+        // Логика комбинированной фильтрации
+        const searchInput = document.getElementById('map-search-input');
+        const checkboxes = document.querySelectorAll('.filter-map');
+
+        function applyMapFilters() {
+            const searchText = searchInput.value.toLowerCase();
+            const selectedCategories = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            objectManager.setFilter(object => {
+                // 1. Проверка категории
+                const matchesCategory = selectedCategories.includes(object.properties.category);
+                
+                // 2. Проверка текста в заголовке, описании или подсказке
+                const contentToSearch = (
+                    object.properties.balloonContentHeader + 
+                    object.properties.balloonContentBody + 
+                    object.properties.hintContent
+                ).toLowerCase();
+                
+                const matchesSearch = !searchText || contentToSearch.includes(searchText);
+
+                return matchesCategory && matchesSearch;
+            });
+        }
+
+        searchInput.addEventListener('input', applyMapFilters);
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', applyMapFilters);
+        });
+    });
+}
+
+// рендер и расчеты
+
+function renderCourses() {
+    const nameQuery = document.getElementById('search-name').value.toLowerCase();
+    const levelQuery = document.getElementById('filter-level').value;
+    const filtered = allCourses.filter(c => c.name.toLowerCase().includes(nameQuery) && (!levelQuery || c.level === levelQuery));
+    const start = (currentPage - 1) * perPage;
+    const paginated = filtered.slice(start, start + perPage);
+    const tbody = document.getElementById('courses-list');
+    tbody.innerHTML = paginated.map(c => `
+        <tr>
+            <td>${c.name}</td>
+            <td>${c.level}</td>
+            <td>${c.teacher}</td>
+            <td>${c.total_length} нед.</td>
+            <td>${c.course_fee_per_hour} ₽</td>
+            <td><button class="btn btn-sm btn-primary" onclick="openOrderModal(${c.id}, 'course')">Выбрать</button></td>
+        </tr>
+    `).join('');
+    renderPagination(filtered.length);
+}
+
+function renderPagination(total) {
+    const pagesCount = Math.ceil(total / perPage);
+    const container = document.getElementById('courses-pagination');
+    container.innerHTML = '';
+    for (let i = 1; i <= pagesCount; i++) {
+        const li = document.createElement('li');
+        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" style="cursor:pointer">${i}</a>`;
+        li.onclick = () => {
+            currentPage = i; renderCourses(); 
+        };
+        container.appendChild(li);
+    }
+}
+
+function populateTutorFilters() {
+    const langs = new Set();
+    allTutors.forEach(t => t.languages_offered.forEach(l => langs.add(l)));
+    const select = document.getElementById('tutor-lang');
+    if (select) {
+        select.innerHTML = '<option value="">Все языки</option>';
+        langs.forEach(l => select.innerHTML += `<option value="${l}">${l}</option>`);
+    }
+}
+
+function renderTutors() {
+    const lang = document.getElementById('tutor-lang').value;
+    const level = document.getElementById('tutor-level').value;
+    const exp = document.getElementById('tutor-exp').value;
+    
+    const filtered = allTutors.filter(t => 
+        (!lang || t.languages_offered.includes(lang)) && 
+        (!level || t.language_level === level) && 
+        (!exp || t.work_experience >= parseInt(exp))
+    );
+    
+    const tutorsContainer = document.getElementById('tutors-list');
+    if (!tutorsContainer) return;
+    
+    if (filtered.length === 0) {
+        tutorsContainer.innerHTML = '<div class="col-12 text-center text-muted">Репетиторы не найдены</div>';
+        return;
+    }
+
+    tutorsContainer.innerHTML = filtered.map(t => {
+        const isSelected = currentItem && currentItem.id === t.id && !currentItem.hasOwnProperty('total_length');
+        const btnText = isSelected ? 'Отменить' : 'Выбрать';
+        const btnClass = isSelected ? 'btn-danger' : 'btn-outline-primary';
+        const cardClass = isSelected ? 'tutor-selected' : '';
+
+        return `
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 card-tutor shadow-sm ${cardClass}" id="tutor-card-${t.id}">
+                <img src="https://placehold.co/400x300?text=${t.name}" class="card-img-top" alt="Photo">
+                <div class="card-body">
+                    <h5 class="card-title">${t.name}</h5>
+                    <p class="card-text mb-1">Опыт: ${t.work_experience} лет</p>
+                    <p class="card-text mb-1">Уровень: ${t.language_level}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="fw-bold">${t.price_per_hour} ₽/ч</span>
+                        <button class="btn ${btnClass} btn-sm" onclick="handleTutorClick(${t.id})">${btnText}</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function openOrderModal(id, type) {
+    currentItem = type === 'course' ? allCourses.find(c => c.id === id) : allTutors.find(t => t.id === id);
+    if (!currentItem) return;
+    if (type === 'tutor') {
+        renderTutors();
+    }
+
+    document.getElementById('item-id').value = id;
+    document.getElementById('item-type').value = type;
+    document.getElementById('form-name').value = type === 'course' ? currentItem.name : `Индивидуально: ${currentItem.name}`;
+    document.getElementById('form-teacher').value = currentItem.teacher || currentItem.name;
+    
+    const durationInput = document.getElementById('form-duration');
+    const durationUnit = document.getElementById('duration-unit');
+
+    if (type === 'course') {
+        durationUnit.textContent = 'недель';
+        durationInput.value = currentItem.total_length; 
+        durationInput.readOnly = true; 
+    } else {
+        durationUnit.textContent = 'часов';
+        durationInput.value = 1; 
+        durationInput.readOnly = false; 
+    const dateSelect = document.getElementById('form-date');
+    dateSelect.innerHTML = '<option value="">Выберите дату</option>';
+    let dates = type === 'course' ? (currentItem.start_dates || []) : ["2025-02-01T10:00", "2025-02-15T10:00"];
+    dates.forEach(d => {
+        const dateOnly = d.split('T')[0];
+        dateSelect.innerHTML += `<option value="${dateOnly}">${dateOnly}</option>`;
+    });
+
+    calculatePrice();
+    modalObj.show();
+}
+function handleTutorClick(id) {
+    if (currentItem && currentItem.id === id && !currentItem.hasOwnProperty('total_length')) {
+        currentItem = null;
+        renderTutors(); 
+        showAlert('Выбор отменен', 'info');
+    } else {
+        openOrderModal(id, 'tutor');
+    }
+}
