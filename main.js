@@ -7,14 +7,13 @@ let currentPage = 1;
 const perPage = 5;
 let currentItem = null;
 
-// переменные Яндекс.Карты
+// глобальные переменные для Яндекс.Карты
 let myMap;
 let objectManager;
 
 const modalElement = document.getElementById('orderModal');
 const modalObj = new bootstrap.Modal(modalElement);
 
-// Уведомления
 function showAlert(message, type = 'success') {
     const container = document.getElementById('notifications');
     const div = document.createElement('div');
@@ -50,7 +49,6 @@ async function fetchTutors() {
 const resourcesData = {
     "type": "FeatureCollection",
     "features": [
-        
         {
             "type": "Feature", "id": 1, "geometry": {"type": "Point", "coordinates": [55.7512, 37.6184]},
             "properties": {
@@ -159,7 +157,7 @@ function initMap() {
         myMap.geoObjects.add(objectManager);
         objectManager.add(resourcesData);
 
-        // Логика комбинированной фильтрации
+        // Логика фильтрации
         const searchInput = document.getElementById('map-search-input');
         const checkboxes = document.querySelectorAll('.filter-map');
 
@@ -194,7 +192,6 @@ function initMap() {
     });
 }
 
-// рендер и расчеты
 
 function renderCourses() {
     const nameQuery = document.getElementById('search-name').value.toLowerCase();
@@ -302,11 +299,12 @@ function openOrderModal(id, type) {
     if (type === 'course') {
         durationUnit.textContent = 'недель';
         durationInput.value = currentItem.total_length; 
-        durationInput.readOnly = true; 
+        durationInput.readOnly = true;
     } else {
         durationUnit.textContent = 'часов';
         durationInput.value = 1; 
-        durationInput.readOnly = false; 
+        durationInput.readOnly = false;
+    }
     const dateSelect = document.getElementById('form-date');
     dateSelect.innerHTML = '<option value="">Выберите дату</option>';
     let dates = type === 'course' ? (currentItem.start_dates || []) : ["2025-02-01T10:00", "2025-02-15T10:00"];
@@ -336,7 +334,7 @@ function calculatePrice() {
     const startDateStr = document.getElementById('form-date').value;
     const startTimeStr = document.getElementById('form-time').value;
     const durationInputVal = parseInt(document.getElementById('form-duration').value) || 1;
-    
+
     const fee = type === 'course' 
         ? (currentItem.course_fee_per_hour || 0) 
         : (currentItem.price_per_hour || 0);
@@ -380,7 +378,7 @@ function calculatePrice() {
         const diffDays = diffTime / (1000 * 60 * 60 * 24);
         
         if (diffDays >= 30) {
-            total *= 0.9; // -10%
+            total *= 0.9;
             earlyCheck.checked = true;
         } else {
             earlyCheck.checked = false;
@@ -390,7 +388,7 @@ function calculatePrice() {
     // 5. Групповая скидка (от 5 человек)
     if (groupCheck) {
         if (persons >= 5) {
-            total *= 0.85; 
+            total *= 0.85;
             groupCheck.checked = true;
         } else {
             groupCheck.checked = false;
@@ -400,7 +398,7 @@ function calculatePrice() {
     // 6. Интенсивный курс (5+ часов в неделю)
     if (intensiveCheck) {
         if (type === 'course' && currentItem.week_length >= 5) {
-            total *= 1.2; 
+            total *= 1.2;
             intensiveCheck.checked = true;
         } else {
             intensiveCheck.checked = false;
