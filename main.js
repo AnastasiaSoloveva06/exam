@@ -327,3 +327,196 @@ function handleTutorClick(id) {
         openOrderModal(id, 'tutor');
     }
 }
+
+function calculatePrice() {
+    if (!currentItem) return 0;
+
+    const type = document.getElementById('item-type').value;
+    const persons = parseInt(document.getElementById('form-persons').value) || 1;
+    const startDateStr = document.getElementById('form-date').value;
+    const startTimeStr = document.getElementById('form-time').value;
+    const durationInputVal = parseInt(document.getElementById('form-duration').value) || 1;
+
+    // Базовая ставка
+    const fee = type === 'course' 
+        ? (currentItem.course_fee_per_hour || 0) 
+        : (currentItem.price_per_hour || 0);
+
+    // Длительность в часах
+    let durationInHours = (type === 'course') 
+        ? durationInputVal * (currentItem.week_length || 1) 
+        : durationInputVal;
+
+    // 1. Множитель выходных/праздников
+    let isWeekendOrHoliday = 1.0;
+    if (startDateStr) {
+        const date = new Date(startDateStr);
+        const day = date.getDay();
+        if (day === 0 || day === 6) {
+            isWeekendOrHoliday = 1.5;
+        }
+    }
+
+    // 2. Утренняя/вечерняя доплата
+    let morningSurcharge = 0;
+    let eveningSurcharge = 0;
+    if (startTimeStr) {
+        const hour = parseInt(startTimeStr.split(':')[0]);
+        if (hour >= 9 && hour < 12) morningSurcharge = 400;
+        if (hour >= 18 && hour <= 20) eveningSurcharge = 1000;
+    }
+
+    // 3. Базовая стоимость по формуле
+    let base = ((fee * durationInHours * isWeekendOrHoliday) + morningSurcharge + eveningSurcharge) * persons;
+    let total = base;
+
+    // Получаем чекбоксы
+    const earlyCheck = document.getElementById('early_registration');
+    const groupCheck = document.getElementById('group_enrollment');
+    const intensiveCheck = document.getElementById('intensive_course');
+
+    // 4. Ранняя регистрация (не менее 1 месяца вперед)
+    if (startDateStr && earlyCheck) {
+        const today = new Date();
+        const startDate = new Date(startDateStr);
+        const diffTime = startDate - today;
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+        
+        if (diffDays >= 30) {
+            total *= 0.9; // -10%
+            earlyCheck.checked = true;
+        } else {
+            earlyCheck.checked = false;
+        }
+    }
+
+    // 5. Групповая скидка (от 5 человек)
+    if (groupCheck) {
+        if (persons >= 5) {
+            total *= 0.85; // -15%
+            groupCheck.checked = true;
+        } else {
+            groupCheck.checked = false;
+        }
+    }
+
+    // 6. Интенсивный курс (5+ часов в неделю)
+    if (intensiveCheck) {
+        if (type === 'course' && currentItem.week_length >= 5) {
+            total *= 1.2; // +20%
+            intensiveCheck.checked = true;
+        } else {
+            intensiveCheck.checked = false;
+        }
+    }
+
+    // 7. Пользовательские опции
+    if (document.getElementById('supplementary')?.checked) total += (2000 * persons);
+    if (document.getElementById('personalized')?.checked) total += (1500 * (type === 'course' ? durationInputVal : 1));
+    if (document.getElementById('excursions')?.checked) total *= 1.25;
+    if (document.getElementById('interactive')?.checked) total *= 1.5;
+    if (document.getElementById('assessment')?.checked) total += 300;
+
+    // 8. Округление и вывод
+    const finalPrice = Math.round(total);
+    const display = document.getElementById('total-price') || document.getElementById('edit-total-price');
+    if (display) display.innerText = finalPrice.toLocaleString('ru-RU');
+
+    return finalPrice;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    fetchCourses();
+    fetchTutors();
+    initMap(); 
+});
+
+document.getElementById('order-form').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const type = document.getElementById('item-type').value;
+    let durationValue;
+
+    if (type === 'course') {
+        durationValue = currentItem.total_length * currentItem.week_length;
+    } else {
+        durationValue = parseInt(document.getElementById('form-duration').value) || 1;
+    }
+
+    const formData = {
+        course_id: type === 'course' ? parseInt(document.getElementById('item-id').value) : null,
+        tutor_id: type === 'tutor' ? parseInt(document.getElementById('item-id').value) : null,
+        date_start: document.getElementById('form-date').value,
+        time_start: document.getElementById('form-time').value,
+        duration: durationValue, 
+        persons: parseInt(document.getElementById('form-persons').value),
+        price: parseInt(document.getElementById('total-price').innerText.replace(/\s/g, '')),
+        early_registration: document.getElementById('early_registration').checked,
+        group_enrollment: document.getElementById('group_enrollment').checked,
+        intensive_course: document.getElementById('intensive_course').checked,
+        supplementary: document.getElementById('supplementary').checked,
+        personalized: document.getElementById('personalized').checked,
+        excursions: document.getElementById('excursions').checked,
+        assessment: document.getElementById('assessment').checked,
+        interactive: document.getElementById('interactive').checked
+    };
+
+    try {
+        const response = await fetch(`${BASE_URL}/orders?api_key=${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            showAlert('Заявка успешно отправлена! Вы можете увидеть её в личном кабинете.');
+            modalObj.hide(); 
+            document.getElementById('order-form').reset(); 
+        } else {
+            const errorData = await response.json();
+            showAlert(`Ошибка при отправке: ${errorData.error || 'Неизвестная ошибка'}`, 'danger');
+        }
+    } catch (error) {
+        console.error('Ошибка сети:', error);
+        showAlert('Произошла ошибка при соединении с сервером', 'danger');
+    }
+};
+
+// Обработчики событий
+document.getElementById('course-search-form').onsubmit = (e) => {
+    e.preventDefault(); currentPage = 1; renderCourses(); 
+};
+document.getElementById('form-date').onchange = () => {
+    const ts = document.getElementById('form-time');
+    ts.disabled = false;
+    ts.innerHTML = '<option value="">Выберите время</option>';
+    
+    // Проверяем наличие данных о длительности, если их нет — берем 1 час по умолчанию
+    let duration = 1;
+    if (currentItem && currentItem.duration) {
+        duration = parseInt(currentItem.duration);
+    }
+
+    for (let h = 9; h <= 20; h++) {
+        let startHour = h;
+        let endHour = h + duration;
+
+        let startTime = `${startHour.toString().padStart(2, '0')}:00`;
+        let endTime = `${endHour.toString().padStart(2, '0')}:00`;
+
+        let intervalText = `${startTime} - ${endTime}`;
+        
+        ts.innerHTML += `<option value="${startTime}">${intervalText}</option>`;
+    }
+    calculatePrice();
+};
+document.getElementById('form-time').onchange = calculatePrice;
+document.getElementById('form-persons').oninput = calculatePrice;
+document.getElementById('form-date').addEventListener('change', calculatePrice);
+document.getElementById('form-duration').oninput = calculatePrice;
+document.querySelectorAll('.opt-check').forEach(el => el.onchange = calculatePrice);
+document.getElementById('tutor-exp').oninput = renderTutors;
+document.getElementById('tutor-lang').onchange = renderTutors;
+document.getElementById('tutor-level').onchange = renderTutors;
