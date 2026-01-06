@@ -336,13 +336,11 @@ function calculatePrice() {
     const startDateStr = document.getElementById('form-date').value;
     const startTimeStr = document.getElementById('form-time').value;
     const durationInputVal = parseInt(document.getElementById('form-duration').value) || 1;
-
-    // Базовая ставка
+    
     const fee = type === 'course' 
         ? (currentItem.course_fee_per_hour || 0) 
         : (currentItem.price_per_hour || 0);
 
-    // Длительность в часах
     let durationInHours = (type === 'course') 
         ? durationInputVal * (currentItem.week_length || 1) 
         : durationInputVal;
@@ -370,7 +368,6 @@ function calculatePrice() {
     let base = ((fee * durationInHours * isWeekendOrHoliday) + morningSurcharge + eveningSurcharge) * persons;
     let total = base;
 
-    // Получаем чекбоксы
     const earlyCheck = document.getElementById('early_registration');
     const groupCheck = document.getElementById('group_enrollment');
     const intensiveCheck = document.getElementById('intensive_course');
@@ -393,7 +390,7 @@ function calculatePrice() {
     // 5. Групповая скидка (от 5 человек)
     if (groupCheck) {
         if (persons >= 5) {
-            total *= 0.85; // -15%
+            total *= 0.85; 
             groupCheck.checked = true;
         } else {
             groupCheck.checked = false;
@@ -403,7 +400,7 @@ function calculatePrice() {
     // 6. Интенсивный курс (5+ часов в неделю)
     if (intensiveCheck) {
         if (type === 'course' && currentItem.week_length >= 5) {
-            total *= 1.2; // +20%
+            total *= 1.2; 
             intensiveCheck.checked = true;
         } else {
             intensiveCheck.checked = false;
@@ -484,7 +481,6 @@ document.getElementById('order-form').onsubmit = async (e) => {
     }
 };
 
-// Обработчики событий
 document.getElementById('course-search-form').onsubmit = (e) => {
     e.preventDefault(); currentPage = 1; renderCourses(); 
 };
@@ -493,7 +489,6 @@ document.getElementById('form-date').onchange = () => {
     ts.disabled = false;
     ts.innerHTML = '<option value="">Выберите время</option>';
     
-    // Проверяем наличие данных о длительности, если их нет — берем 1 час по умолчанию
     let duration = 1;
     if (currentItem && currentItem.duration) {
         duration = parseInt(currentItem.duration);
