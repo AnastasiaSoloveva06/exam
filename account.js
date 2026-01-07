@@ -90,3 +90,59 @@ function showDetails(id, name) {
     `;
     detailsModal.show();
 }
+
+// редактирование заявки
+function openEditModal(id) {
+    currentEditingOrder = orders.find(x => x.id == id);
+    const o = currentEditingOrder;
+
+    const item = o.course_id 
+        ? courses.find(c => c.id == o.course_id) 
+        : tutors.find(t => t.id == o.tutor_id);
+
+    const dateSel = document.getElementById('edit-date');
+    dateSel.innerHTML = '';
+
+    let availableDates = [];
+    if (o.course_id) {
+        availableDates = item ? (item.start_dates || []) : [];
+    } else {
+        availableDates = ["2025-02-01T10:00", "2025-02-15T10:00"];
+    }
+
+    availableDates.forEach(d => {
+        const dateOnly = d.split('T')[0];
+        const option = document.createElement('option');
+        option.value = dateOnly;
+        option.text = dateOnly;
+        if (dateOnly === o.date_start) option.selected = true;
+        dateSel.appendChild(option);
+    });
+
+    if (!availableDates.some(d => d.startsWith(o.date_start))) {
+        const currentOpt = document.createElement('option');
+        currentOpt.value = o.date_start;
+        currentOpt.text = o.date_start;
+        currentOpt.selected = true;
+        dateSel.prepend(currentOpt);
+    }
+
+    document.getElementById('edit-id').value = o.id;
+    document.getElementById('edit-persons').value = o.persons;
+    
+    const timeSel = document.getElementById('edit-time');
+    timeSel.innerHTML = '';
+    for(let h=9; h<=20; h++) {
+        const val = `${h.toString().padStart(2,'0')}:00`;
+        timeSel.innerHTML += `<option value="${val}" ${o.time_start.startsWith(val)?'selected':''}>${val}</option>`;
+    }
+
+    document.getElementById('edit-supplementary').checked = !!o.supplementary;
+    document.getElementById('edit-personalized').checked = !!o.personalized;
+    document.getElementById('edit-excursions').checked = !!o.excursions;
+    document.getElementById('edit-interactive').checked = !!o.interactive;
+    document.getElementById('edit-assessment').checked = !!o.assessment;
+
+    updateEditPrice();
+    editModal.show();
+}
