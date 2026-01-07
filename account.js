@@ -40,3 +40,53 @@ async function fetchOrders() {
     
     renderOrders();
 }
+
+function renderOrders() {
+    const tbody = document.getElementById('orders-list');
+    const start = (currentPage - 1) * perPage;
+    const paginated = orders.slice(start, start + perPage);
+
+    tbody.innerHTML = paginated.map((o, i) => {
+        let name = o.course_id ? courses.find(c => c.id == o.course_id)?.name : tutors.find(t => t.id == o.tutor_id)?.name;
+        name = name || "Программа удалена";
+
+        return `
+            <tr>
+                <td>${start + i + 1}</td>
+                <td>${name}</td>
+                <td>${o.date_start} / ${o.time_start}</td>
+                <td>${o.price.toLocaleString()} ₽</td>
+                <td>
+                    <button class="btn btn-sm btn-info text-white" onclick="showDetails(${o.id}, '${name}')">👁</button>
+                    <button class="btn btn-sm btn-warning" onclick="openEditModal(${o.id})">✏️</button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDelete(${o.id})">🗑</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    renderPagination();
+}
+
+function renderPagination() {
+    const totalPages = Math.ceil(orders.length / perPage);
+    const container = document.getElementById('orders-pagination');
+    container.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        container.innerHTML += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="currentPage=${i};renderOrders()">${i}</a></li>`;
+    }
+}
+
+function showDetails(id, name) {
+    const o = orders.find(x => x.id == id);
+    const body = document.getElementById('details-body');
+    
+    body.innerHTML = `
+        <h5>${name}</h5>
+        <p><strong>Дата:</strong> ${o.date_start} в ${o.time_start}</p>
+        <p><strong>Студентов:</strong> ${o.persons}</p>
+        <hr>
+        <p><strong>Опции:</strong> ${[o.supplementary?'Материалы':'', o.personalized?'Индивидуально':'', o.excursions?'Экскурсии':'', o.interactive?'Платформа':''].filter(Boolean).join(', ') || 'Нет'}</p>
+        <h4 class="text-end">${o.price.toLocaleString()} ₽</h4>
+    `;
+    detailsModal.show();
+}
