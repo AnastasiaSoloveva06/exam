@@ -4,5 +4,18 @@ body { background-color: #f8f9fa; }
 .pagination .page-link { cursor: pointer; }
 .btn-primary { background-color: #0056b3; border-color: #0056b3; }
 
-
-
+/* Уведомления */
+#notifications {
+    pointer-events: none;
+}
+#notifications .alert {
+    pointer-events: auto;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: slideDown 0.4s ease-out;
+}
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
