@@ -85,7 +85,7 @@ function showDetails(id, name) {
         <p><strong>Дата:</strong> ${o.date_start} в ${o.time_start}</p>
         <p><strong>Студентов:</strong> ${o.persons}</p>
         <hr>
-        <p><strong>Опции:</strong> ${[o.supplementary?'Материалы':'', o.personalized?'Индивидуально':'', o.excursions?'Экскурсии':'', o.interactive?'Платформа':''].filter(Boolean).join(', ') || 'Нет'}</p>
+        <p><strong>Опции:</strong> ${[o.supplementary?'Материалы':'', o.personalized?'Индивидуально':'', o.excursions?'Экскурсии':'', o.interactive?'Платформа':'', o.assessment ? 'Оценка уровня' : ''].filter(Boolean).join(', ') || 'Нет'}</p>
         <h4 class="text-end">${o.price.toLocaleString()} ₽</h4>
     `;
     detailsModal.show();
