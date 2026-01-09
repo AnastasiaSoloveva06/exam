@@ -1,5 +1,5 @@
 const API_KEY = '01453dec-ac11-443d-864a-8ad4584a357c'; 
-const BASE_URL = 'http://exam-api-courses.std-900.ist.mospolytech.ru/api'; 
+ const BASE_URL = '/polytech-api';
 
 let allCourses = [];
 let allTutors = [];
