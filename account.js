@@ -193,7 +193,7 @@ function updateEditPrice() {
         }
     }
 
-    // 4. Групповая скидка - ФИКС: должна применяться автоматически!
+    // 4. Групповая скидка
     const groupCheck = document.getElementById('group_enrollment');
     if (groupCheck) {
         if (persons >= 5) {
@@ -221,7 +221,7 @@ function updateEditPrice() {
     if (document.getElementById('edit-interactive').checked) total *= 1.5;
     if (document.getElementById('edit-assessment').checked) total += 300;
     
-    // 7. Оценка уровня (если чекбокс существует)
+    // 7. Оценка уровня
     const assessmentCheckbox = document.getElementById('edit-assessment');
     if (assessmentCheckbox && assessmentCheckbox.checked) total += 300;
 
