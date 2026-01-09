@@ -155,10 +155,10 @@ footer {
 
 .tutor-selected {
     border: 3px solid #1B4332 !important;
-    box-shadow: 0 8px 25px rgba(27, 67, 50, 0.2) !important;
+    box-shadow: 0 8px 25px rgba(27, 67, 50, 0.2);
     transform: translateY(-5px);
     transition: all 0.3s ease;
-    background-color: #f0f7f3 !important;
+    background-color: #f0f7f3;
 }
 
 .tutor-selected .card-title {
@@ -167,9 +167,9 @@ footer {
 }
 
 .tutor-selected .btn-outline-primary {
-    background-color: #1B4332 !important;
-    color: white !important;
-    border-color: #1B4332 !important;
+    background-color: #1B4332;
+    color: white;
+    border-color: #1B4332;
 }
 
 .col-md-4 .p-4.border {
@@ -178,12 +178,12 @@ footer {
 }
 
 .col-md-4 .p-4.border:hover {
-    background-color: #4b603d !important; 
-    color: var(--white) !important; 
+    background-color: #4b603d; 
+    color: var(--white); 
     transform: translateY(-5px); 
-    box-shadow: 0 8px 20px rgba(75, 96, 61, 0.3) !important; 
+    box-shadow: 0 8px 20px rgba(75, 96, 61, 0.3); 
 }
 
 .col-md-4 .p-4.border:hover h3 {
-    color: var(--white) !important;
+    color: var(--white);
 }
