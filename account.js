@@ -57,9 +57,9 @@ function renderOrders() {
                 <td>${o.date_start} / ${o.time_start}</td>
                 <td>${o.price.toLocaleString()} ₽</td>
                 <td>
-                    <button class="btn btn-sm text-white" style="background-color: #1B4332; border-color: #1B4332;" onclick="showDetails(${o.id}, '${name}')">👁</button>
-                    <button class="btn btn-sm text-white" style="background-color: #2E7D32; border-color: #2E7D32;" onclick="openEditModal(${o.id})">✏️</button>
-                    <button class="btn btn-sm text-white" style="background-color: #99c27eff; border-color: #99c27eff;" onclick="confirmDelete(${o.id})">🗑</button>
+                   <button class="btn btn-sm text-white" style="background-color: #1B4332; border-color: #1B4332;" onclick="showDetails(${o.id}, '${name}')">👁</button>
+                 <button class="btn btn-sm text-white" style="background-color: #2E7D32; border-color: #2E7D32;" onclick="openEditModal(${o.id})">✏️</button>
+                 <button class="btn btn-sm text-white" style="background-color: #99c27eff; border-color: #99c27eff;" onclick="confirmDelete(${o.id})">🗑</button>
                 </td>
             </tr>
         `;
