@@ -171,3 +171,19 @@ footer {
     color: white !important;
     border-color: #1B4332 !important;
 }
+
+.col-md-4 .p-4.border {
+    transition: all 0.3s ease; 
+    cursor: pointer;
+}
+
+.col-md-4 .p-4.border:hover {
+    background-color: #4b603d !important; 
+    color: var(--white) !important; 
+    transform: translateY(-5px); 
+    box-shadow: 0 8px 20px rgba(75, 96, 61, 0.3) !important; 
+}
+
+.col-md-4 .p-4.border:hover h3 {
+    color: var(--white) !important;
+}
